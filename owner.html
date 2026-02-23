@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ครัวรีเทิน - หน้าเจ้าของร้าน</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #7b1fa2 0%, #9c27b0 100%);
+            color: white;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .stat-icon.revenue { background: #e8f5e9; }
+        .stat-icon.orders { background: #e3f2fd; }
+        .stat-icon.items { background: #fff3e0; }
+        .stat-icon.avg { background: #f3e5f5; }
+
+        .stat-info h3 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .stat-info p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        .menu-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .menu-stat-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #9c27b0;
+        }
+
+        .menu-stat-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .menu-stat-detail {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .orders-table th,
+        .orders-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .orders-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .orders-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-input {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Kanit', sans-serif;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #9c27b0;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #7b1fa2;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border: none;
+            background: none;
+            font-family: 'Kanit', sans-serif;
+            cursor: pointer;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .tab.active {
+            color: #9c27b0;
+            border-bottom-color: #9c27b0;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .issue-card {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .issue-resolved {
+            background: #e8f5e9;
+            border-left-color: #4caf50;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div>
+                <h2>👑 ครัวรีเทิน - หน้าเจ้าของร้าน</h2>
+                <span id="ownerName" style="opacity: 0.9;"></span>
+            </div>
+            <button class="logout-btn" onclick="logout()">ออกจากระบบ</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- สถิติสรุป -->
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-icon revenue">💰</div>
+                <div class="stat-info">
+                    <h3 id="totalRevenue">฿0</h3>
+                    <p>รายได้รวมทั้งหมด</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orders">📦</div>
+                <div class="stat-info">
+                    <h3 id="totalOrders">0</h3>
+                    <p>จำนวนออเดอร์</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon items">🍽️</div>
+                <div class="stat-info">
+                    <h3 id="totalItems">0</h3>
+                    <p>จานที่ขายได้</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon avg">📊</div>
+                <div class="stat-info">
+                    <h3 id="avgOrder">฿0</h3>
+                    <p>เฉลี่ยต่อออเดอร์</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('overview')">📊 ภาพรวม</button>
+            <button class="tab" onclick="switchTab('orders')">📋 รายการออเดอร์</button>
+            <button class="tab" onclick="switchTab('issues')">⚠️ ปัญหา</button>
+        </div>
+
+        <!-- ภาพรวม -->
+        <div id="overview" class="tab-content active">
+            <div class="section">
+                <h3 class="section-title">📈 รายงานยอดขายรายวัน (7 วันล่าสุด)</h3>
+                <div class="chart-container" id="dailyChart">
+                    <!-- สร้างกราฟด้วย CSS -->
+                </div>
+            </div>
+
+            <div class="section">
+                <h3 class="section-title">🏆 เมนูขายดี</h3>
+                <div class="menu-stats" id="topMenus"></div>
+            </div>
+        </div>
+
+        <!-- รายการออเดอร์ -->
+        <div id="orders" class="tab-content">
+            <div class="section">
+                <div class="filter-row">
+                    <input type="date" class="filter-input" id="filterDate">
+                    <select class="filter-input" id="filterStatus">
+                        <option value="">ทุกสถานะ</option>
+                        <option value="waiting">รอดำเนินการ</option>
+                        <option value="cooking">กำลังทำ</option>
+                        <option value="ready">พร้อมเสิร์ฟ</option>
+                        <option value="served">เสิร์ฟแล้ว</option>
+                        <option value="paid">ชำระเงินแล้ว</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="filterOrders()">กรอง</button>
+                    <button class="btn" onclick="loadAllOrders()" style="background: #e0e0e0;">แสดงทั้งหมด</button>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>เลขออเดอร์</th>
+                                <th>โต๊ะ</th>
+                                <th>รายการ</th>
+                                <th>ยอดรวม</th>
+                                <th>สถานะ</th>
+                                <th>เวลา</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ปัญหา -->
+        <div id="issues" class="tab-content">
+            <div class="section">
+                <h3 class="section-title">⚠️ ปัญหาที่แจ้งเข้ามา</h3>
+                <div id="issuesContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="storage.js"></script>
+    <script>
+        let currentUser = null;
+
+        window.onload = function() {
+            currentUser = getCurrentUser();
+            if (!currentUser || currentUser.role !== 'owner') {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            document.getElementById('ownerName').textContent = currentUser.name;
+            
+            loadDashboard();
+            loadAllOrders();
+            loadIssues();
+            
+            // Sync อัตโนมัติ
+            setupAutoSync((key) => {
+                if (key === 'orders' || key === 'interval') {
+                    loadDashboard();
+                    loadAllOrders();
+                }
+                if (key === 'issues' || key === 'interval') loadIssues();
+            });
+        };
+
+        function loadDashboard() {
+            const reports = calculateReports();
+            
+            // อัปเดตสถิติหลัก
+            document.getElementById('totalRevenue').textContent = `฿${reports.summary.totalRevenue.toLocaleString()}`;
+            document.getElementById('totalOrders').textContent = reports.summary.totalOrders.toLocaleString();
+            document.getElementById('totalItems').textContent = reports.summary.totalItems.toLocaleString();
+            
+            const avg = reports.summary.totalOrders > 0 ? 
+                Math.round(reports.summary.totalRevenue / reports.summary.totalOrders) : 0;
+            document.getElementById('avgOrder').textContent = `฿${avg.toLocaleString()}`;
+            
+            // สร้างกราฟรายวัน
+            createDailyChart(reports.daily);
+            
+            // เมนูขายดี
+            const menuStats = Object.entries(reports.menuStats)
+                .sort((a, b) => b[1].qty - a[1].qty)
+                .slice(0, 6);
+            
+            const menuContainer = document.getElementById('topMenus');
+            if (menuStats.length === 0) {
+                menuContainer.innerHTML = '<div class="empty-state">ยังไม่มีข้อมูลการขาย</div>';
+            } else {
+                menuContainer.innerHTML = menuStats.map(([name, data]) => `
+                    <div class="menu-stat-item">
+                        <div class="menu-stat-name">${name}</div>
+                        <div class="menu-stat-detail">
+                            จำนวน: ${data.qty} จาน<br>
+                            รายได้: ฿${data.revenue.toLocaleString()}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function createDailyChart(dailyData) {
+            const container = document.getElementById('dailyChart');
+            const dates = Object.keys(dailyData).sort().slice(-7);
+            
+            if (dates.length === 0) {
+                container.innerHTML = '<div class="empty-state">ยังไม่มีข้อมูล</div>';
+                return;
+            }
+            
+            const maxValue = Math.max(...dates.map(d => dailyData[d].total));
+            
+            let html = '<div style="display: flex; align-items: flex-end; justify-content: space-around; height: 100%; padding: 20px;">';
+            
+            dates.forEach(date => {
+                const day = dailyData[date];
+                const height = maxValue > 0 ? (day.total / maxValue) * 200 : 0;
+                const displayDate = new Date(date).toLocaleDateString('th-TH', {month: 'short', day: 'numeric'});
+                
+                html += `
+                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                        <div style="margin-bottom: 10px; font-weight: 600; color: #9c27b0;">฿${day.total.toLocaleString()}</div>
+                        <div style="width: 60px; height: ${height}px; background: linear-gradient(to top, #9c27b0, #ce93d8); 
+                                    border-radius: 5px 5px 0 0; transition: all 0.3s;"></div>
+                        <div style="margin-top: 10px; font-size: 0.85rem; color: #666;">${displayDate}</div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function loadAllOrders() {
+            const orders = getAllOrders().sort((a, b) => b.createdAt - a.createdAt);
+            displayOrders(orders);
+        }
+
+        function filterOrders() {
+            const date = document.getElementById('filterDate').value;
+            const status = document.getElementById('filterStatus').value;
+            
+            let orders = getAllOrders();
+            
+            if (date) {
+                orders = orders.filter(o => new Date(o.createdAt).toISOString().startsWith(date));
+            }
+            
+            if (status) {
+                orders = orders.filter(o => o.status === status);
+            }
+            
+            displayOrders(orders.sort((a, b) => b.createdAt - a.createdAt));
+        }
+
+        function displayOrders(orders) {
+            const tbody = document.getElementById('ordersTableBody');
+            
+            if (orders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: #999;">ไม่พบรายการ</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = orders.map(order => {
+                const items = order.items.map(i => `${i.name} x${i.qty}`).join(', ');
+                const statusColor = getStatusColor(order.status);
+                const statusText = getStatusText(order.status);
+                
+                return `
+                    <tr>
+                        <td>${order.id}</td>
+                        <td>โต๊ะ ${order.table}</td>
+                        <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">${items}</td>
+                        <td>฿${order.total}</td>
+                        <td><span class="status-badge" style="background: ${statusColor}">${statusText}</span></td>
+                        <td>${new Date(order.createdAt).toLocaleString('th-TH')}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function loadIssues() {
+            const issues = getAllIssues().sort((a, b) => b.createdAt - a.createdAt);
+            const container = document.getElementById('issuesContainer');
+            
+            if (issues.length === 0) {
+                container.innerHTML = '<div class="empty-state">ไม่มีปัญหาที่แจ้งเข้ามา</div>';
+                return;
+            }
+            
+            container.innerHTML = issues.map(issue => `
+                <div class="issue-card ${issue.status === 'resolved' ? 'issue-resolved' : ''}">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <strong>โต๊ะ ${issue.table}</strong>
+                        <span style="font-size: 0.85rem; color: #666;">${new Date(issue.createdAt).toLocaleString('th-TH')}</span>
+                    </div>
+                    <p>${issue.message}</p>
+                    ${issue.response ? `<div style="margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.05); border-radius: 5px;">ตอบกลับ: ${issue.response}</div>` : ''}
+                    ${issue.status !== 'resolved' ? `
+                        <div style="margin-top: 10px;">
+                            <button class="btn btn-primary" onclick="resolveIssue(${issue.id})">✓ แก้ไขแล้ว</button>
+                        </div>
+                    ` : '<div style="margin-top: 10px; color: #4caf50; font-weight: 600;">✓ แก้ไขแล้ว</div>'}
+                </div>
+            `).join('');
+        }
+
+        function resolveIssue(issueId) {
+            const response = prompt('บันทึกการแก้ไข (ถ้ามี):');
+            if (response !== null) {
+                updateIssueStatus(issueId, 'resolved', response || 'แก้ไขแล้ว');
+                loadIssues();
+            }
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function logout() {
+            if (confirm('ต้องการออกจากระบบ?')) {
+                logout();
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+</body>
+</html>
+
