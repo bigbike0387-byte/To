@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ครัวรีเทิน - หน้าครัว</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6f00 0%, #ff9800 100%);
+            color: white;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .stats-bar {
+            background: white;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ff6f00;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .orders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-top: 5px solid #9e9e9e;
+            transition: all 0.3s;
+        }
+
+        .order-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+        }
+
+        .order-card.waiting { border-top-color: #9e9e9e; }
+        .order-card.cooking { border-top-color: #ff9800; }
+        .order-card.ready { border-top-color: #2196f3; }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f5f5f5;
+        }
+
+        .order-id {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .table-badge {
+            background: #ff6f00;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .order-time {
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .items-list {
+            margin-bottom: 15px;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .item-row:last-child {
+            border-bottom: none;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .item-note {
+            font-size: 0.85rem;
+            color: #e65100;
+            font-style: italic;
+            margin-top: 3px;
+        }
+
+        .item-status-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-select {
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: 2px solid #e0e0e0;
+            font-family: 'Kanit', sans-serif;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .status-select.waiting { background: #f5f5f5; color: #666; }
+        .status-select.cooking { background: #fff3e0; color: #e65100; border-color: #ff9800; }
+        .status-select.ready { background: #e3f2fd; color: #1565c0; border-color: #2196f3; }
+        .status-select.served { background: #e8f5e9; color: #2e7d32; border-color: #4caf50; }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Kanit', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-cook {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-ready {
+            background: #2196f3;
+            color: white;
+        }
+
+        .btn-serve {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* Chat Section */
+        .chat-section {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .chat-header {
+            background: #1e3c72;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .chat-body {
+            height: 300px;
+            display: none;
+            flex-direction: column;
+        }
+
+        .chat-body.active {
+            display: flex;
+        }
+
+        .chat-tabs {
+            display: flex;
+            background: #f5f5f5;
+            overflow-x: auto;
+        }
+
+        .chat-tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            border: none;
+            background: none;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .chat-tab.active {
+            background: white;
+            color: #1e3c72;
+            font-weight: 600;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f5f5f5;
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #e0e0e0;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .send-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: #1e3c72;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Notifications */
+        .notification-panel {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 300px;
+            max-height: 400px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            overflow: hidden;
+            display: none;
+            z-index: 999;
+        }
+
+        .notification-panel.active {
+            display: block;
+        }
+
+        .notif-header {
+            background: #f44336;
+            color: white;
+            padding: 15px;
+            font-weight: 600;
+        }
+
+        .notif-list {
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .notif-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .notif-item:hover {
+            background: #f5f5f5;
+        }
+
+        .notif-item.unread {
+            background: #fff3e0;
+        }
+
+        .notif-time {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: #999;
+        }
+
+        .badge {
+            background: #f44336;
+            color: white;
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 5px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Kanit', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background: #ff6f00;
+            color: white;
+            border-color: #ff6f00;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="user-info">
+                <h2>👨‍🍳 ครัวรีเทิน - หน้าครัว</h2>
+                <span id="staffName" style="opacity: 0.9;"></span>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="logout-btn" onclick="toggleNotifications()">
+                    🔔 แจ้งเตือน <span id="notifCount" class="badge" style="display:none">0</span>
+                </button>
+                <button class="logout-btn" onclick="logout()">ออกจากระบบ</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-value" id="statWaiting">0</div>
+            <div class="stat-label">รอดำเนินการ</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="statCooking">0</div>
+            <div class="stat-label">กำลังทำ</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="statReady">0</div>
+            <div class="stat-label">พร้อมเสิร์ฟ</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="statTotal">0</div>
+            <div class="stat-label">ออเดอร์วันนี้</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="filter-tabs">
+            <button class="filter-btn active" onclick="filterOrders('all')">ทั้งหมด</button>
+            <button class="filter-btn" onclick="filterOrders('waiting')">⏳ รอดำเนินการ</button>
+            <button class="filter-btn" onclick="filterOrders('cooking')">🔥 กำลังทำ</button>
+            <button class="filter-btn" onclick="filterOrders('ready')">✅ พร้อมเสิร์ฟ</button>
+        </div>
+
+        <h3 class="section-title">
+            📋 รายการออเดอร์
+            <span style="font-size: 0.9rem; color: #666; font-weight: normal;">(อัปเดตอัตโนมัติ)</span>
+        </h3>
+        
+        <div class="orders-grid" id="ordersContainer">
+            <div class="empty-state">
+                <div style="font-size: 4rem; margin-bottom: 15px;">📭</div>
+                <p>ไม่มีออเดอร์ในขณะนี้</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- แผงการแจ้งเตือน -->
+    <div class="notification-panel" id="notificationPanel">
+        <div class="notif-header">🔔 การแจ้งเตือน</div>
+        <div class="notif-list" id="notificationList"></div>
+    </div>
+
+    <!-- แชท -->
+    <div class="chat-section">
+        <div class="chat-header" onclick="toggleChat()">
+            <span>💬 แชทกับลูกค้า</span>
+            <span id="chatBadge" class="badge" style="display:none">0</span>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="chat-tabs" id="chatTabs"></div>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chatInput" placeholder="พิมพ์ข้อความ...">
+                <button class="send-btn" onclick="sendReply()">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="storage.js"></script>
+    <script>
+        let currentUser = null;
+        let currentFilter = 'all';
+        let selectedTable = null;
+        let unreadCount = 0;
+
+        window.onload = function() {
+            currentUser = getCurrentUser();
+            if (!currentUser || currentUser.role !== 'staff') {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            document.getElementById('staffName').textContent = currentUser.name;
+            
+            loadOrders();
+            loadStats();
+            loadNotifications();
+            loadChatTabs();
+            
+            // Sync อัตโนมัติ
+            setupAutoSync((key) => {
+                if (key === 'orders' || key === 'interval') {
+                    loadOrders();
+                    loadStats();
+                }
+                if (key === 'notifications' || key === 'interval') loadNotifications();
+                if (key === 'messages' || key === 'interval') {
+                    loadChatTabs();
+                    if (selectedTable) loadChatMessages(selectedTable);
+                }
+            });
+        };
+
+        function loadStats() {
+            const orders = getAllOrders();
+            const today = new Date().toISOString().split('T')[0];
+            const todayOrders = orders.filter(o => new Date(o.createdAt).toISOString().startsWith(today));
+            
+            document.getElementById('statWaiting').textContent = orders.filter(o => o.status === 'waiting').length;
+            document.getElementById('statCooking').textContent = orders.filter(o => o.status === 'cooking').length;
+            document.getElementById('statReady').textContent = orders.filter(o => o.status === 'ready').length;
+            document.getElementById('statTotal').textContent = todayOrders.length;
+        }
+
+        function filterOrders(status) {
+            currentFilter = status;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.includes(getStatusText(status)) || (status === 'all' && btn.textContent === 'ทั้งหมด')) {
+                    btn.classList.add('active');
+                }
+            });
+            loadOrders();
+        }
+
+        function loadOrders() {
+            let orders = getAllOrders().filter(o => !o.paid);
+            
+            if (currentFilter !== 'all') {
+                orders = orders.filter(o => o.status === currentFilter);
+            }
+            
+            // เรียงตามเวลา (ใหม่สุดก่อน)
+            orders.sort((a, b) => b.createdAt - a.createdAt);
+            
+            const container = document.getElementById('ordersContainer');
+            
+            if (orders.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div style="font-size: 4rem; margin-bottom: 15px;">📭</div>
+                        <p>ไม่มีออเดอร์ในขณะนี้</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            orders.forEach(order => {
+                const waitTime = Math.floor((Date.now() - order.createdAt) / 60000); // นาที
+                const statusClass = order.status;
+                
+                html += `
+                    <div class="order-card ${statusClass}">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id">${order.id}</div>
+                                <div class="order-time">⏱️ ${waitTime} นาทีที่แล้ว</div>
+                            </div>
+                            <span class="table-badge">โต๊ะ ${order.table}</span>
+                        </div>
+                        <div class="items-list">
+                `;
+                
+                order.items.forEach((item, index) => {
+                    html += `
+                        <div class="item-row">
+                            <div class="item-info">
+                                <div class="item-name">${item.name} x ${item.qty}</div>
+                                ${item.note ? `<div class="item-note">📌 ${item.note}</div>` : ''}
+                            </div>
+                            <select class="status-select ${item.status}" 
+                                    onchange="updateItemStatus('${order.id}', ${index}, this.value)">
+                                <option value="waiting" ${item.status === 'waiting' ? 'selected' : ''}>⏳ รอ</option>
+                                <option value="cooking" ${item.status === 'cooking' ? 'selected' : ''}>🔥 กำลังทำ</option>
+                                <option value="ready" ${item.status === 'ready' ? 'selected' : ''}>✅ พร้อม</option>
+                                <option value="served" ${item.status === 'served' ? 'selected' : ''}>🍽️ เสิร์ฟ</option>
+                            </select>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 2px solid #f5f5f5;">
+                            <span style="font-weight: 600; color: #ff6f00;">รวม: ฿${order.total}</span>
+                            <div class="action-buttons" style="flex: 0 0 auto; gap: 5px;">
+                `;
+                
+                // ปุ่มด่วน
+                if (order.status === 'waiting') {
+                    html += `<button class="btn btn-cook" onclick="quickUpdate('${order.id}', 'cooking')">🔥 เริ่มทำ</button>`;
+                } else if (order.status === 'cooking') {
+                    html += `<button class="btn btn-ready" onclick="quickUpdate('${order.id}', 'ready')">✅ พร้อมเสิร์ฟ</button>`;
+                } else if (order.status === 'ready') {
+                    html += `<button class="btn btn-serve" onclick="quickUpdate('${order.id}', 'served')">🍽️ เสิร์ฟแล้ว</button>`;
+                }
+                
+                html += `
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function updateItemStatus(orderId, itemIndex, newStatus) {
+            if (updateItemStatus(orderId, itemIndex, newStatus)) {
+                loadOrders();
+                loadStats();
+            }
+        }
+
+        function quickUpdate(orderId, status) {
+            const orders = getAllOrders();
+            const order = orders.find(o => o.id === orderId);
+            
+            if (order) {
+                // อัปเดตทุกรายการในออเดอร์
+                order.items.forEach((item, index) => {
+                    if (status === 'cooking' && item.status === 'waiting') {
+                        updateItemStatus(orderId, index, 'cooking');
+                    } else if (status === 'ready' && item.status === 'cooking') {
+                        updateItemStatus(orderId, index, 'ready');
+                    } else if (status === 'served') {
+                        updateItemStatus(orderId, index, 'served');
+                    }
+                });
+                
+                loadOrders();
+                loadStats();
+            }
+        }
+
+        // การแจ้งเตือน
+        function toggleNotifications() {
+            const panel = document.getElementById('notificationPanel');
+            panel.classList.toggle('active');
+            if (panel.classList.contains('active')) {
+                markAllAsRead();
+            }
+        }
+
+        function loadNotifications() {
+            const notifications = getNotifications('staff');
+            const unread = notifications.filter(n => !n.read);
+            const badge = document.getElementById('notifCount');
+            
+            if (unread.length > 0) {
+                badge.textContent = unread.length;
+                badge.style.display = 'inline';
+            } else {
+                badge.style.display = 'none';
+            }
+            
+            const list = document.getElementById('notificationList');
+            if (notifications.length === 0) {
+                list.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">ไม่มีการแจ้งเตือน</div>';
+                return;
+            }
+            
+            let html = '';
+            notifications.slice(0, 20).forEach(notif => {
+                const time = new Date(notif.time).toLocaleTimeString('th-TH');
+                html += `
+                    <div class="notif-item ${notif.read ? '' : 'unread'}" onclick="handleNotification(${notif.id})">
+                        <div>${notif.message}</div>
+                        <div class="notif-time">${time}</div>
+                    </div>
+                `;
+            });
+            
+            list.innerHTML = html;
+        }
+
+        function markAllAsRead() {
+            const notifications = getData('notifications') || [];
+            notifications.forEach(n => {
+                if (!n.read) markNotificationAsRead(n.id);
+            });
+            document.getElementById('notifCount').style.display = 'none';
+        }
+
+        function handleNotification(id) {
+            markNotificationAsRead(id);
+            loadNotifications();
+        }
+
+        // แชท
+        function toggleChat() {
+            document.getElementById('chatBody').classList.toggle('active');
+        }
+
+        function loadChatTabs() {
+            const messages = getAllMessages();
+            const tables = [...new Set(messages.map(m => m.table))];
+            
+            const tabsContainer = document.getElementById('chatTabs');
+            let html = '';
+            
+            tables.forEach(table => {
+                const unread = messages.filter(m => m.table === table && !m.read && m.sender === 'customer').length;
+                html += `
+                    <button class="chat-tab ${table === selectedTable ? 'active' : ''}" 
+                            onclick="selectTable(${table})">
+                        โต๊ะ ${table} ${unread > 0 ? `<span class="badge">${unread}</span>` : ''}
+                    </button>
+                `;
+            });
+            
+            tabsContainer.innerHTML = html || '<div style="padding: 10px; color: #999;">ไม่มีข้อความ</div>';
+        }
+
+        function selectTable(table) {
+            selectedTable = table;
+            loadChatTabs();
+            loadChatMessages(table);
+        }
+
+        function loadChatMessages(table) {
+            if (!table) return;
+            
+            const messages = getMessagesByTable(table);
+            const container = document.getElementById('chatMessages');
+            
+            let html = '';
+            messages.forEach(msg => {
+                const isStaff = msg.sender === 'staff';
+                const time = new Date(msg.time).toLocaleTimeString('th-TH', {hour: '2-digit', minute: '2-digit'});
+                
+                html += `
+                    <div style="margin-bottom: 10px; text-align: ${isStaff ? 'right' : 'left'};">
+                        <div style="display: inline-block; max-width: 80%; padding: 10px 15px; border-radius: 15px; 
+                                    background: ${isStaff ? '#1e3c72' : 'white'}; color: ${isStaff ? 'white' : '#333'};
+                                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                            <div>${msg.text}</div>
+                            <div style="font-size: 0.75rem; opacity: 0.7; margin-top: 5px;">${time}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            container.scrollTop = container.scrollHeight;
+            
+            // ทำเครื่องหมายอ่านแล้ว
+            messages.forEach(m => {
+                if (!m.read && m.sender === 'customer') {
+                    // อัปเดตสถานะอ่าน (ต้องเพิ่มฟังก์ชันใน storage.js)
+                }
+            });
+        }
+
+        function sendReply() {
+            if (!selectedTable) {
+                alert('กรุณาเลือกโต๊ะก่อน');
+                return;
+            }
+            
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            sendMessage({
+                table: selectedTable,
+                sender: 'staff',
+                senderName: currentUser.name,
+                text: text
+            });
+            
+            input.value = '';
+            loadChatMessages(selectedTable);
+            loadChatTabs();
+        }
+
+        document.getElementById('chatInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendReply();
+        });
+
+        function logout() {
+            if (confirm('ต้องการออกจากระบบ?')) {
+                logout();
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+</body>
+</html>
+
