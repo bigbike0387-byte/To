@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ครัวรีเทิน - หน้าลูกค้า</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: #f5f5f5;
+            padding-bottom: 80px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-info {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 70px;
+            z-index: 99;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: 'Kanit', sans-serif;
+            font-size: 0.9rem;
+            position: relative;
+            color: #666;
+        }
+
+        .tab.active {
+            color: #1e3c72;
+            font-weight: 600;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            right: 20%;
+            height: 3px;
+            background: #ffc107;
+            border-radius: 3px;
+        }
+
+        .tab-content {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Menu Section */
+        .category-title {
+            font-size: 1.2rem;
+            color: #1e3c72;
+            margin: 20px 0 15px;
+            padding-left: 10px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .menu-item {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .menu-image {
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            background: #f5f5f5;
+        }
+
+        .menu-info {
+            padding: 15px;
+        }
+
+        .menu-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .menu-price {
+            color: #1e3c72;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .add-btn {
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+            border: none;
+            background: #ffc107;
+            color: #1e3c72;
+            border-radius: 8px;
+            font-family: 'Kanit', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .add-btn:hover {
+            background: #ffb300;
+        }
+
+        /* Cart Section */
+        .cart-item {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .cart-item-info h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-note {
+            font-size: 0.85rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .cart-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qty-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: #e3f2fd;
+            color: #1e3c72;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .qty-display {
+            font-weight: 600;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .note-input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-family: 'Kanit', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .cart-summary {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1e3c72;
+        }
+
+        .order-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            border-radius: 10px;
+            font-family: 'Kanit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .order-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .order-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Orders Status */
+        .order-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 5px solid #9e9e9e;
+        }
+
+        .order-card.cooking { border-left-color: #ff9800; }
+        .order-card.ready { border-left-color: #2196f3; }
+        .order-card.served { border-left-color: #4caf50; }
+        .order-card.paid { border-left-color: #9c27b0; }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .order-id {
+            font-weight: 600;
+            color: #1e3c72;
+        }
+
+        .order-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .order-items {
+            margin-bottom: 15px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-status {
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .pay-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);
+            color: white;
+            border-radius: 8px;
+            font-family: 'Kanit', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Chat Section */
+        .chat-container {
+            background: white;
+            border-radius: 15px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f5f5f5;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            word-wrap: break-word;
+        }
+
+        .message.sent {
+            background: #1e3c72;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.received {
+            background: white;
+            color: #333;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-family: 'Kanit', sans-serif;
+            outline: none;
+        }
+
+        .chat-input:focus {
+            border-color: #1e3c72;
+        }
+
+        .send-btn {
+            width: 45px;
+            height: 45px;
+            border: none;
+            background: #1e3c72;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Call Staff Button */
+        .fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #f44336;
+            color: white;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        /* Notification Badge */
+        .badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #f44336;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Kanit', sans-serif;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .modal-btn.confirm {
+            background: #f44336;
+            color: white;
+        }
+
+        .modal-btn.cancel {
+            background: #e0e0e0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div>
+                <h2>🍳 ครัวรีเทิน</h2>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <span class="table-info" id="tableDisplay">โต๊ะ -</span>
+                <button class="logout-btn" onclick="logout()">ออก</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('menu')">📋 เมนู</button>
+        <button class="tab" onclick="switchTab('cart')">🛒 ตะกร้า <span id="cartBadge" class="badge" style="display:none">0</span></button>
+        <button class="tab" onclick="switchTab('orders')">📦 ออเดอร์ <span id="orderBadge" class="badge" style="display:none">0</span></button>
+        <button class="tab" onclick="switchTab('chat')">💬 แชท <span id="chatBadge" class="badge" style="display:none">0</span></button>
+    </div>
+
+    <!-- เมนูอาหาร -->
+    <div id="menu" class="tab-content active">
+        <div id="menuContainer"></div>
+    </div>
+
+    <!-- ตะกร้า -->
+    <div id="cart" class="tab-content">
+        <div id="cartContainer">
+            <div class="empty-state">
+                <div class="empty-state-icon">🛒</div>
+                <p>ตะกร้าว่างเปล่า</p>
+                <p style="font-size: 0.9rem; margin-top: 10px;">เลือกเมนูอาหารที่ชอบเลย!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ออเดอร์ -->
+    <div id="orders" class="tab-content">
+        <div id="ordersContainer">
+            <div class="empty-state">
+                <div class="empty-state-icon">📦</div>
+                <p>ยังไม่มีออเดอร์</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- แชท -->
+    <div id="chat" class="tab-content">
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages">
+                <div style="text-align: center; color: #999; padding: 20px;">
+                    เริ่มต้นการสนทนากับครัว...
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chatInput" placeholder="พิมพ์ข้อความ..." maxlength="200">
+                <button class="send-btn" onclick="sendChatMessage()">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ปุ่มเรียกพนักงาน -->
+    <button class="fab" onclick="showCallModal()" title="เรียกพนักงาน">🔔</button>
+
+    <!-- Modal เรียกพนักงาน -->
+    <div class="modal" id="callModal">
+        <div class="modal-content">
+            <h3 class="modal-title">เรียกพนักงาน</h3>
+            <p>เลือกเหตุผลที่ต้องการเรียกพนักงาน:</p>
+            <div class="modal-buttons" style="flex-direction: column; margin-top: 15px;">
+                <button class="modal-btn confirm" onclick="callStaffReason('ต้องการชำระเงิน')" style="margin-bottom: 10px;">💰 ต้องการชำระเงิน</button>
+                <button class="modal-btn confirm" onclick="callStaffReason('ต้องการน้ำเพิ่ม')" style="margin-bottom: 10px;">💧 ต้องการน้ำเพิ่ม</button>
+                <button class="modal-btn confirm" onclick="callStaffReason('อาหารช้าเกินไป')" style="margin-bottom: 10px;">⏰ อาหารช้าเกินไป</button>
+                <button class="modal-btn confirm" onclick="callStaffReason('อื่นๆ')" style="margin-bottom: 10px;">📢 อื่นๆ</button>
+                <button class="modal-btn cancel" onclick="hideCallModal()">ยกเลิก</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="storage.js"></script>
+    <script>
+        let currentUser = null;
+        let cart = [];
+        let currentTab = 'menu';
+
+        // ตรวจสอบการ login
+        window.onload = function() {
+            currentUser = getCurrentUser();
+            if (!currentUser || currentUser.role !== 'customer') {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            document.getElementById('tableDisplay').textContent = `โต๊ะ ${currentUser.table}`;
+            
+            loadMenu();
+            loadOrders();
+            loadChat();
+            
+            // ตั้งค่า Sync อัตโนมัติ
+            setupAutoSync((key) => {
+                if (key === 'orders' || key === 'interval') loadOrders();
+                if (key === 'messages' || key === 'interval') loadChat();
+                if (key === 'notifications' || key === 'interval') checkNotifications();
+            });
+            
+            // ตรวจสอบการแจ้งเตือนทุก 3 วินาที
+            checkNotifications();
+        };
+
+        // สลับแท็บ
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+            
+            // ซ่อน badge เมื่อเปิดแท็บ
+            if (tab === 'cart') document.getElementById('cartBadge').style.display = 'none';
+            if (tab === 'orders') document.getElementById('orderBadge').style.display = 'none';
+            if (tab === 'chat') {
+                document.getElementById('chatBadge').style.display = 'none';
+                scrollToBottom();
+            }
+        }
+
+        // โหลดเมนู
+        function loadMenu() {
+            const menus = getData('menus') || [];
+            const container = document.getElementById('menuContainer');
+            
+            // จัดกลุ่มตามหมวดหมู่
+            const categories = {};
+            menus.forEach(menu => {
+                if (!categories[menu.category]) categories[menu.category] = [];
+                categories[menu.category].push(menu);
+            });
+            
+            let html = '';
+            for (const [category, items] of Object.entries(categories)) {
+                html += `<h3 class="category-title">${category}</h3>`;
+                html += '<div class="menu-grid">';
+                items.forEach(menu => {
+                    html += `
+                        <div class="menu-item" onclick="addToCart(${menu.id})">
+                            <div class="menu-image">${menu.image}</div>
+                            <div class="menu-info">
+                                <div class="menu-name">${menu.name}</div>
+                                <div class="menu-price">฿${menu.price}</div>
+                                <button class="add-btn">+ เพิ่ม</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            container.innerHTML = html;
+        }
+
+        // เพิ่มลงตะกร้า
+        function addToCart(menuId) {
+            const menus = getData('menus') || [];
+            const menu = menus.find(m => m.id === menuId);
+            
+            const existingItem = cart.find(item => item.menuId === menuId);
+            if (existingItem) {
+                existingItem.qty++;
+            } else {
+                cart.push({
+                    menuId: menu.id,
+                    name: menu.name,
+                    price: menu.price,
+                    qty: 1,
+                    note: ''
+                });
+            }
+            
+            updateCartUI();
+            
+            // แสดง badge
+            const badge = document.getElementById('cartBadge');
+            badge.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
+            badge.style.display = 'inline';
+        }
+
+        // อัปเดตตะกร้า
+        function updateCartUI() {
+            const container = document.getElementById('cartContainer');
+            
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🛒</div>
+                        <p>ตะกร้าว่างเปล่า</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                total += item.price * item.qty;
+                html += `
+                    <div class="cart-item">
+                        <div style="flex:1">
+                            <h4>${item.name}</h4>
+                            <div style="color: #666; font-size: 0.9rem;">฿${item.price} x ${item.qty}</div>
+                            <input type="text" class="note-input" placeholder="หมายเหตุ (เช่น ไม่เผ็ด)" 
+                                   value="${item.note}" onchange="updateNote(${index}, this.value)">
+                        </div>
+                        <div class="cart-controls">
+                            <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
+                            <span class="qty-display">${item.qty}</span>
+                            <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                <div class="cart-summary">
+                    <div class="total-row">
+                        <span>รวมทั้งหมด</span>
+                        <span>฿${total}</span>
+                    </div>
+                    <button class="order-btn" onclick="placeOrder()" ${cart.length === 0 ? 'disabled' : ''}>
+                        ✅ สั่งอาหาร (${cart.length} รายการ)
+                    </button>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        function updateQty(index, change) {
+            cart[index].qty += change;
+            if (cart[index].qty <= 0) {
+                cart.splice(index, 1);
+            }
+            updateCartUI();
+        }
+
+        function updateNote(index, note) {
+            cart[index].note = note;
+        }
+
+        // สั่งอาหาร
+        function placeOrder() {
+            if (cart.length === 0) return;
+            
+            const orderData = {
+                table: currentUser.table,
+                items: cart.map(item => ({
+                    name: item.name,
+                    price: item.price,
+                    qty: item.qty,
+                    note: item.note
+                }))
+            };
+            
+            const orderId = createOrder(orderData);
+            
+            // ล้างตะกร้า
+            cart = [];
+            updateCartUI();
+            
+            alert(`✅ สั่งอาหารสำเร็จ!\nหมายเลขออเดอร์: ${orderId}`);
+            
+            // เปลี่ยนไปหน้าออเดอร์
+            document.querySelectorAll('.tab')[2].click();
+        }
+
+        // โหลดออเดอร์
+        function loadOrders() {
+            const orders = getOrdersByTable(currentUser.table);
+            const container = document.getElementById('ordersContainer');
+            
+            if (orders.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📦</div>
+                        <p>ยังไม่มีออเดอร์</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // เรียงจากใหม่ไปเก่า
+            orders.sort((a, b) => b.createdAt - a.createdAt);
+            
+            let html = '';
+            orders.forEach(order => {
+                const statusColor = getStatusColor(order.status);
+                const statusText = getStatusText(order.status);
+                
+                html += `
+                    <div class="order-card ${order.status}">
+                        <div class="order-header">
+                            <span class="order-id">${order.id}</span>
+                            <span class="order-status" style="background: ${statusColor}">${statusText}</span>
+                        </div>
+                        <div class="order-items">
+                `;
+                
+                order.items.forEach(item => {
+                    const itemStatusColor = getStatusColor(item.status);
+                    html += `
+                        <div class="order-item">
+                            <span>${item.name} x ${item.qty}</span>
+                            <span class="item-status" style="background: ${itemStatusColor}">${getStatusText(item.status)}</span>
+                        </div>
+                    `;
+                    if (item.note) {
+                        html += `<div style="font-size: 0.85rem; color: #666; font-style: italic; margin-bottom: 8px;">หมายเหตุ: ${item.note}</div>`;
+                    }
+                });
+                
+                html += `
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;">
+                            <span style="font-weight: 600; color: #1e3c72;">รวม: ฿${order.total}</span>
+                            <span style="font-size: 0.85rem; color: #999;">${new Date(order.createdAt).toLocaleString('th-TH')}</span>
+                        </div>
+                `;
+                
+                if (order.status === 'served' && !order.paid) {
+                    html += `<button class="pay-btn" onclick="payOrder('${order.id}')">💳 ชำระเงิน</button>`;
+                }
+                
+                html += '</div>';
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // ชำระเงิน
+        function payOrder(orderId) {
+            if (confirm('ยืนยันการชำระเงิน?')) {
+                updateOrderStatus(orderId, 'paid');
+                loadOrders();
+                alert('✅ ชำระเงินสำเร็จ! ขอบคุณที่ใช้บริการ');
+            }
+        }
+
+        // โหลดแชท
+        function loadChat() {
+            const messages = getMessagesByTable(currentUser.table);
+            const container = document.getElementById('chatMessages');
+            
+            if (messages.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">เริ่มต้นการสนทนากับครัว...</div>';
+                return;
+            }
+            
+            let html = '';
+            messages.forEach(msg => {
+                const isSent = msg.sender === 'customer';
+                const time = new Date(msg.time).toLocaleTimeString('th-TH', {hour: '2-digit', minute: '2-digit'});
+                
+                html += `
+                    <div class="message ${isSent ? 'sent' : 'received'}">
+                        <div>${msg.text}</div>
+                        <div class="message-time">${time}</div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            const container = document.getElementById('chatMessages');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // ส่งข้อความ
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            sendMessage({
+                table: currentUser.table,
+                sender: 'customer',
+                senderName: `โต๊ะ ${currentUser.table}`,
+                text: text
+            });
+            
+            input.value = '';
+            loadChat();
+        }
+
+        // กด Enter ส่งข้อความ
+        document.getElementById('chatInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendChatMessage();
+        });
+
+        // ตรวจสอบการแจ้งเตือน
+        function checkNotifications() {
+            const notifications = getNotifications('customer', currentUser.table);
+            const unread = notifications.filter(n => !n.read);
+            
+            // นับแต่ละประเภท
+            const orderNotifications = unread.filter(n => n.type === 'status').length;
+            
+            if (orderNotifications > 0 && currentTab !== 'orders') {
+                const badge = document.getElementById('orderBadge');
+                badge.textContent = orderNotifications;
+                badge.style.display = 'inline';
+            }
+        }
+
+        // Modal เรียกพนักงาน
+        function showCallModal() {
+            document.getElementById('callModal').classList.add('active');
+        }
+
+        function hideCallModal() {
+            document.getElementById('callModal').classList.remove('active');
+        }
+
+        function callStaffReason(reason) {
+            callStaff(currentUser.table, reason);
+            hideCallModal();
+            alert('📢 เรียกพนักงานแล้ว: ' + reason);
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('ต้องการออกจากระบบ?')) {
+                logout();
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+</body>
+</html>
+
